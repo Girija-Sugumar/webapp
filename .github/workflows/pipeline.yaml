@@ -26,6 +26,12 @@ jobs:
           docker login contgs.azurecr.io -u contgs -p ${{ secrets.PASSWORD }}
           docker tag webapp2 contgs.azurecr.io/webapp2
           docker push contgs.azurecr.io/webapp2
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+         creds: ${{ secrets.AZURE_CREDENTIALS }}
+         
       - name: deploy to azuerapp
         uses: azure/webapps-deploy@v2
         with:
