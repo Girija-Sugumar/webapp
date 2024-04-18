@@ -27,10 +27,12 @@ jobs:
           docker tag webapp2 contgs.azurecr.io/webapp2
           docker push contgs.azurecr.io/webapp2
 
-      - name: Azure Login
+      - name: 'Az CLI login'
         uses: azure/login@v1
         with:
-         creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
          
       - name: deploy to azuerapp
         uses: azure/webapps-deploy@v2
