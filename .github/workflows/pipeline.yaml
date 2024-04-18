@@ -1,0 +1,33 @@
+name: Deploy
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  push_to_registry:
+    name: push images to registry
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: checkcode
+        uses: actions/checkout@v4
+      
+      - name: build and push to Azure container registry
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+         host: ${{ secrets.SSH_HOST }}
+         username: ${{ secrets.USER_NAME }}
+         password: ${{ secrets.SSH_PASSWORD }}
+         script: |
+          cd /home/azureuser/webapp &&
+          sudo git pull
+          docker build -t webapp2 .
+          docker login contgs.azurecr.io -u contgs -p ${{ secrets.PASSWORD }}
+          docker tag webapp2 contgs.azurecr.io/webapp2
+          docker push contgs.azurecr.io/webapp2
+      - name: deploy to azuerapp
+        uses: azure/webapps-deploy@v2
+        with:
+         app-name: 'kubernetesapp'
+         images: 'contgs.azurecr.io/webapp2'
